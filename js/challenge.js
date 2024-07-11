@@ -1,0 +1,102 @@
+// Get DOM elements
+const counterDisplay = document.getElementById('counter');
+const plusButton = document.getElementById('plus');
+const minusButton = document.getElementById('minus');
+const likeButton = document.getElementById('like');
+const pauseButton = document.getElementById('pause');
+const restartButton = document.getElementById('restart');
+const commentForm = document.getElementById('comment-form');
+const commentInput = document.getElementById('comment-input');
+const commentsList = document.getElementById('comments');
+
+// Counter variables
+let counterValue = 0;
+let likeCount = 0;
+let isPaused = false;
+let timer;
+
+// Function to update counter display
+function updateCounter() {
+    counterDisplay.textContent = counterValue;
+}
+
+// Function to increment counter
+function incrementCounter() {
+    counterValue++;
+    updateCounter();
+}
+
+// Function to decrement counter
+function decrementCounter() {
+    counterValue--;
+    updateCounter();
+}
+
+// Function to handle like button click
+function like() {
+    likeCount++;
+    const likeDisplay = document.getElementById('like-count');
+    likeDisplay.textContent = `${likeCount} ${likeCount === 1 ? 'like' : 'likes'}`;
+}
+
+// Function to handle pause button click
+function togglePause() {
+    isPaused = !isPaused;
+
+    if (isPaused) {
+        clearInterval(timer);
+        plusButton.disabled = true;
+        minusButton.disabled = true;
+        likeButton.disabled = true;
+        pauseButton.textContent = 'Resume';
+    } else {
+        timer = setInterval(incrementCounter, 1000);
+        plusButton.disabled = false;
+        minusButton.disabled = false;
+        likeButton.disabled = false;
+        pauseButton.textContent = 'Pause';
+    }
+}
+
+// Function to handle restart button click
+function restart() {
+    counterValue = 0;
+    likeCount = 0;
+    updateCounter();
+    likeButton.textContent = 'Like';
+    isPaused = false;
+    clearInterval(timer);
+    timer = setInterval(incrementCounter, 1000);
+    plusButton.disabled = false;
+    minusButton.disabled = false;
+    likeButton.disabled = false;
+    pauseButton.textContent = 'Pause';
+}
+
+// Function to handle comment submission
+function addComment(comment) {
+    const commentItem = document.createElement('li');
+    commentItem.textContent = comment;
+    commentsList.appendChild(commentItem);
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Start the timer on page load
+    timer = setInterval(incrementCounter, 1000);
+});
+
+plusButton.addEventListener('click', incrementCounter);
+minusButton.addEventListener('click', decrementCounter);
+likeButton.addEventListener('click', like);
+pauseButton.addEventListener('click', togglePause);
+restartButton.addEventListener('click', restart);
+
+commentForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const commentText = commentInput.value;
+    if (commentText.trim() !== '') {
+        addComment(commentText);
+        commentInput.value = '';
+    }
+});
